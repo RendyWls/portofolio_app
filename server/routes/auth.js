@@ -1,13 +1,17 @@
-// server/routes/auth.js
 const express = require("express");
 const router = express.Router();
-const { signup, forgotPassword, login } = require("../controllers/authController");
+const authController = require("../controllers/authController");
+const { resetPassword } = require("../controllers/authController");
 
-// POST /api/auth/signup
-router.post("/signup", signup);
-router.post("/login", login);
+router.post("/reset-password/:token", resetPassword);
 
-// POST /api/auth/forgot-password
-router.post("/forgot-password", forgotPassword);
+// Signup, login, forgot password
+router.post("/signup", authController.signup);
+router.post("/login", authController.login);
+router.post("/forgot-password", authController.forgotPassword);
+
+// Get & update profile
+router.get("/profile/:username", authController.getProfile);
+router.put("/profile/:username", authController.updateProfile);
 
 module.exports = router;

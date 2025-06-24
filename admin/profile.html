@@ -1,0 +1,38 @@
+<!-- admin/profile.html -->
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Edit Profil</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="css/stlye.css" />
+  </head>
+  <body>
+    <div id="navbar"></div>
+    <main>
+      <div class="container mt-5">
+        <h3>Edit Profil</h3>
+        <form id="profileForm" class="mt-4">
+          <div class="mb-3">
+            <label>Email</label>
+            <input type="email" id="email" class="form-control" required />
+          </div>
+          <div class="mb-3">
+            <label>Username</label>
+            <input type="text" id="username" class="form-control" required />
+          </div>
+          <div class="mb-3">
+            <label>Tanggal Lahir</label>
+            <input type="date" id="dob" class="form-control" required />
+          </div>
+          <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+          <div id="successMsg" class="text-success mt-2" style="display: none"></div>
+        </form>
+      </div>
+    </main>
+    <div id="footer"></div>
+    <script src="/admin/js/profile.js"></script>
+    <script src="/admin/js/include.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

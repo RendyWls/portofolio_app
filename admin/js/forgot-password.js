@@ -1,29 +1,30 @@
-// public/admin/js/forgot-password.js
-
+// admin/js/forgot-password.js
 document.getElementById("forgotForm").addEventListener("submit", async function (e) {
   e.preventDefault();
 
   const email = document.getElementById("email").value.trim();
 
   try {
-    const response = await fetch("/api/auth/forgot-password", {
+    const response = await fetch("http://127.0.0.1:5000/api/auth/forgot-password", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email }),
     });
 
     const result = await response.json();
 
     if (response.ok) {
-      alert("Link reset telah dikirim ke email (jika terdaftar).");
-      window.location.href = "login.html";
+      document.getElementById("message").innerText = result.message;
+      document.getElementById("message").style.display = "block";
+      document.getElementById("errorMsg").style.display = "none";
     } else {
-      alert(result.message || "Email tidak ditemukan.");
+      document.getElementById("errorMsg").innerText = result.message;
+      document.getElementById("errorMsg").style.display = "block";
+      document.getElementById("message").style.display = "none";
     }
-  } catch (error) {
-    alert("Terjadi kesalahan saat mengirim permintaan.");
-    console.error(error);
+  } catch (err) {
+    console.error(err);
+    document.getElementById("errorMsg").innerText = "Gagal mengirim permintaan.";
+    document.getElementById("errorMsg").style.display = "block";
   }
 });

@@ -33,16 +33,20 @@ exports.signup = async (req, res) => {
 
 exports.forgotPassword = async (req, res) => {
   const { email } = req.body;
+
   try {
     const user = await User.findOne({ email });
-    if (!user) return res.status(200).json({ message: "Jika email terdaftar, link reset akan dikirim." });
+    if (!user) {
+      return res.status(200).json({ message: "Jika email terdaftar, link reset akan dikirim." });
+    }
 
+    // Buat token dan set masa berlaku 1 jam
     const token = Math.random().toString(36).substring(2);
     user.resetToken = token;
-    user.resetTokenExpiry = Date.now() + 3600000; // 1 jam
+    user.resetTokenExpiry = Date.now() + 3600000; // 1 jam dari sekarang
     await user.save();
 
-    // Kirim email
+    // Konfigurasi transporter
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
@@ -51,12 +55,20 @@ exports.forgotPassword = async (req, res) => {
       },
     });
 
+    // Kirim email reset
+    const resetUrl = `http://127.0.0.1:5500/admin/reset-password.html?token=${token}`;
+
     await transporter.sendMail({
       from: `"Portofolio App" <${process.env.MAIL_USER}>`,
       to: email,
       subject: "Reset Password",
-      html: `<p>Silakan klik link berikut untuk reset password:</p>
-             <a href="http://localhost:5000/reset-password/${token}">Reset Password</a>`,
+      html: `
+        <p>Halo,</p>
+        <p>Anda meminta reset password. Klik tautan di bawah ini untuk mengatur ulang password Anda:</p>
+        <a href="${resetUrl}">Reset Password</a>
+        <p>Link ini akan kedaluwarsa dalam 1 jam.</p>
+        <p>Abaikan email ini jika Anda tidak meminta reset password.</p>
+      `,
     });
 
     res.status(200).json({ message: "Link reset dikirim ke email (jika terdaftar)." });
@@ -88,5 +100,64 @@ exports.login = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Gagal login." });
+  }
+};
+
+// Ambil profil user
+exports.getProfile = async (req, res) => {
+  try {
+    const user = await User.findOne({ username: req.params.username });
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    res.json({
+      email: user.email,
+      username: user.username,
+      dateOfBirth: user.dateOfBirth, // ← HARUS `dateOfBirth`
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+// Update profil user
+exports.updateProfile = async (req, res) => {
+  const { username } = req.params;
+  const { email, username: newUsername, dob } = req.body;
+
+  try {
+    const updatedUser = await User.findOneAndUpdate({ username }, { email, username: newUsername, dob }, { new: true });
+
+    if (!updatedUser) return res.status(404).json({ message: "User tidak ditemukan" });
+
+    res.json({ message: "Profil diperbarui", user: updatedUser });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Gagal memperbarui profil" });
+  }
+};
+
+exports.resetPassword = async (req, res) => {
+  const { token } = req.params;
+  const { password } = req.body;
+
+  try {
+    const user = await User.findOne({
+      resetToken: token,
+      resetTokenExpiry: { $gt: Date.now() },
+    });
+
+    if (!user) return res.status(400).json({ message: "Token tidak valid atau sudah kedaluwarsa." });
+
+    const passwordHash = await bcrypt.hash(password, 10);
+    user.passwordHash = passwordHash;
+    user.resetToken = undefined;
+    user.resetTokenExpiry = undefined;
+    await user.save();
+
+    res.status(200).json({ message: "Password berhasil direset." });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Terjadi kesalahan saat mereset password." });
   }
 };
