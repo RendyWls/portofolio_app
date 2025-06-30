@@ -3,14 +3,16 @@ document.addEventListener("DOMContentLoaded", () => {
   const msg = document.getElementById("msg");
 
   // Ambil token dari URL
-  const token = window.location.pathname.split("/").pop();
+  const token = new URLSearchParams(window.location.search).get("token");
 
-  if (!token) {
-    msg.textContent = "Token tidak ditemukan di URL.";
-    msg.style.display = "block";
-    form.style.display = "none";
-    return;
-  }
+  fetch(`http://127.0.0.1:5000/api/auth/verify-token/${token}`)
+    .then((res) => res.json())
+    .then((data) => {
+      if (data.message !== "Token valid") {
+        alert("Token tidak valid atau sudah kedaluwarsa");
+        window.location.href = "/admin/login.html";
+      }
+    });
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
