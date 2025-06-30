@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dashboard Admin</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="css/style.css" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   </head>
 
@@ -87,8 +86,80 @@
 
         <!-- Section: Transaksi -->
         <section id="transaksiSection" class="d-none">
-          <h5>Riwayat Transaksi</h5>
-          <p>Data transaksi akan muncul di sini...</p>
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5>List Transaksi</h5>
+            <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addTransaksi">+ Tambah Transaksi</button>
+          </div>
+
+          <div class="table-responsive">
+            <table class="table table-striped table-bordered align-middle">
+              <thead class="table-dark">
+                <tr>
+                  <th>Tanggal</th>
+                  <th>Nama Akun</th>
+                  <th>Jumlah Pengeluaran</th>
+                  <th>Kategori</th>
+                  <th>Jenis</th>
+                  <th>Saldo</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="transaksiTableBody">
+                <!-- Data akun dimuat via JS -->
+              </tbody>
+            </table>
+          </div>
+
+          <div class="modal fade" id="addTransaksi" tabindex="-1" aria-labelledby="addTransaksiLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <form id="formTransaksi">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="addTransaksiLabel">Tambah Transaksi</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                  </div>
+
+                  <div class="modal-body">
+                    <div class="mb-3">
+                      <label for="akunSelect" class="form-label">Pilih Akun</label>
+                      <select id="akunSelect" class="form-select" required>
+                        <option value="">Pilih Akun</option>
+                        <!-- Opsi akun dimuat dinamis -->
+                      </select>
+                    </div>
+
+                    <div class="mb-3">
+                      <label for="jumlah" class="form-label">Jumlah</label>
+                      <input type="currency" class="form-control" id="jumlah" required />
+                    </div>
+
+                    <div class="mb-3">
+                      <label for="kategori" class="form-label">Kategori</label>
+                      <input type="text" class="form-control" id="kategori" required />
+                    </div>
+
+                    <div class="mb-3">
+                      <label for="jenis" class="form-label">Jenis</label>
+                      <select class="form-select" id="jenis" required>
+                        <option value="pendapatan">Pendapatan</option>
+                        <option value="pengeluaran">Pengeluaran</option>
+                      </select>
+                    </div>
+
+                    <div class="mb-3">
+                      <label for="tanggal" class="form-label">Tanggal</label>
+                      <input type="date" class="form-control" id="tanggal" required />
+                    </div>
+                  </div>
+
+                  <div class="modal-footer">
+                    <button type="submit" class="btn btn-success">Simpan</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
         </section>
 
         <!-- Section: Budgeting -->

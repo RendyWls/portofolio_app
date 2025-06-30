@@ -28,3 +28,6 @@ mongoose
 
 const akunRoutes = require("./routes/akun");
 app.use("/api/akun", akunRoutes);
+
+const transaksiRoutes = require("./routes/transaksi");
+app.use("/api/transaksi", transaksiRoutes);
